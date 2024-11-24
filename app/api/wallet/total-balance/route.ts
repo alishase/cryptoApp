@@ -5,7 +5,7 @@ import { authOptions } from "../../../../lib/auth";
 import { getExchangeRate } from "../../../../lib/binance"; // Adjust the import path as needed
 
 const prisma = new PrismaClient();
-
+export const dynamic = "force-dynamic";
 export async function GET() {
   try {
     const session = await getServerSession(authOptions);
