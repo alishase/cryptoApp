@@ -1,6 +1,4 @@
 "use client";
-
-import useSWR from "swr";
 import {
   Card,
   CardContent,
@@ -9,7 +7,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { ArrowUpIcon, ArrowDownIcon } from "lucide-react";
-
+import useSWRForPairs from "../hooks/use-swr-pairs";
 // Types
 type CryptoInfo = {
   symbol: string;
@@ -27,34 +25,8 @@ type BinanceResponse = {
 };
 
 // Helper function to format volume
-const formatVolume = (volumeInThousands: number): string => {
-  const volume = volumeInThousands * 1000;
-  if (volume >= 1e9) return `${(volume / 1e9).toFixed(1)}B`;
-  if (volume >= 1e6) return `${(volume / 1e6).toFixed(1)}M`;
-  if (volume >= 1e3) return `${(volume / 1e3).toFixed(1)}K`;
-  return volume.toString();
-};
 
 // Fetcher function for SWR
-const fetcher = async (pair: string): Promise<CryptoInfo> => {
-  const response = await fetch(
-    `https://api.binance.com/api/v3/ticker/24hr?symbol=${pair.toUpperCase()}`
-  );
-
-  if (!response.ok) {
-    throw new Error(`Error fetching data for pair ${pair}`);
-  }
-
-  const data: BinanceResponse = await response.json();
-
-  return {
-    symbol: data.symbol,
-    name: pair.toUpperCase(),
-    price: parseFloat(data.lastPrice),
-    change24h: `${data.priceChangePercent}%`,
-    volume: formatVolume(parseFloat(data.volume)),
-  };
-};
 
 // Individual crypto card component
 const CryptoCard = ({ crypto }: { crypto: CryptoInfo }) => (
@@ -98,12 +70,7 @@ export function MarketOverview() {
   const pairs = ["BTCUSDT", "ETHUSDT", "BNBUSDT", "SOLUSDT"];
 
   // Fetch data for all pairs using SWR
-  const results = pairs.map((pair) =>
-    useSWR(pair, fetcher, {
-      refreshInterval: 10000, // Refresh every 10 seconds
-      revalidateOnFocus: true,
-    })
-  );
+  const results = useSWRForPairs(pairs);
 
   const isLoading = results.some((result) => result.isLoading);
   const error = results.find((result) => result.error);

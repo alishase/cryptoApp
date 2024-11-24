@@ -5,7 +5,7 @@ import { NewsSection } from "@/components/news-section";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
-
+import { useSession } from "next-auth/react";
 export default function Home() {
   return (
     <div className="space-y-8">

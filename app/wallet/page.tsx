@@ -30,6 +30,7 @@ import {
 // import { loadStripe } from "@stripe/stripe-js";
 import { useExchangeRate } from "../../hooks/use-exchange-rates";
 import { useToast } from "../../hooks/use-toast";
+import { useUSDRates } from "../../hooks/use-usd-rates";
 
 interface WalletBalance {
   currency: string;
@@ -43,7 +44,7 @@ const SUPPORTED_CRYPTOS = ["BTC", "ETH", "USDT"];
 // );
 
 export default function WalletPage() {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const router = useRouter();
   const { toast } = useToast();
   const [wallets, setWallets] = useState<WalletBalance[]>([]);
@@ -57,33 +58,56 @@ export default function WalletPage() {
   // Get real-time exchange rates
   const depositRate = useExchangeRate("USD", selectedCrypto);
   const exchangeRate = useExchangeRate(fromCurrency, toCurrency);
-  const usdRates = SUPPORTED_CRYPTOS.map((crypto) => ({
-    currency: crypto,
-    rate: useExchangeRate(crypto, "USD").rate,
-  }));
-
-  useEffect(() => {
-    if (!session) {
-      router.push("/login");
-      return;
-    }
-    fetchWallets();
-  }, [session, router]);
+  const usdRates = useUSDRates(SUPPORTED_CRYPTOS);
 
   const fetchWallets = async () => {
     try {
-      const response = await fetch("/api/wallet");
+      const response = await fetch("/api/wallet", {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          // Add other headers here
+        },
+      });
+      if (!response.ok) {
+        throw new Error("Failed to fetch wallets");
+      }
       const data = await response.json();
       setWallets(data);
     } catch (error) {
-      console.error("Failed to fetch wallets:", error);
       toast({
         title: "Error",
-        description: "Failed to fetch wallet balances",
+        description: `Failed to fetch wallet balances: ${error}`,
         variant: "destructive",
       });
     }
   };
+
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.push("/login");
+      return;
+    }
+    // Assuming `fetchWallets` is a function that fetches wallet data
+    // This should include error handling for real-world applications
+
+    fetchWallets();
+  }, [session, router, toast]);
+
+  // const fetchWallets = async () => {
+  //   try {
+  //     const response = await fetch("/api/wallet");
+  //     const data = await response.json();
+  //     setWallets(data);
+  //   } catch (error) {
+  //     console.error("Failed to fetch wallets:", error);
+  //     toast({
+  //       title: "Error",
+  //       description: "Failed to fetch wallet balances",
+  //       variant: "destructive",
+  //     });
+  //   }
+  // };
 
   const calculateUsdValue = (balance: number, currency: string) => {
     const rate = usdRates.find((r) => r.currency === currency)?.rate;

@@ -37,19 +37,6 @@ export default function DashboardPage() {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [wallets, setWallets] = useState<WalletBalance[]>([]);
   const [totalBalance, setTotalBalance] = useState(0);
-
-  useEffect(() => {
-    if (status === "unauthenticated") {
-      router.push("/login");
-      return;
-    }
-    fetchDashboardData();
-  }, [session, status, router]);
-
-  if (status === "loading") {
-    <div>Loading...</div>;
-  }
-
   const fetchDashboardData = async () => {
     try {
       // Fetch wallets and total balance
@@ -72,6 +59,18 @@ export default function DashboardPage() {
     }
   };
 
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.push("/login");
+      return;
+    }
+    fetchDashboardData();
+  }, [session, status, router]);
+
+  if (status === "loading") {
+    <div>Loading...</div>;
+  }
+
   return (
     <div className="container mx-auto py-8 space-y-6">
       <h1 className="text-3xl font-bold mb-6">Dashboard</h1>
@@ -86,10 +85,12 @@ export default function DashboardPage() {
           <CardContent>
             <div className="text-2xl font-bold">
               $
-              {totalBalance.toLocaleString("en-US", {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2,
-              })}
+              {totalBalance
+                ? totalBalance.toLocaleString("en-US", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })
+                : "Loading..."}
             </div>
             <div className="text-xs text-muted-foreground space-y-1">
               {wallets.map((wallet) => (
