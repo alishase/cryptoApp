@@ -3,18 +3,18 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = "file:./dev.db"
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
 }
 
 model User {
-  id            String    @id @default(cuid())
-  email         String    @unique
+  id            String        @id @default(auto()) @map("_id") @db.ObjectId
+  email         String        @unique
   name          String?
   password      String
-  phone         String?   @unique
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  phone         String?       @unique
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
   wallets       Wallet[]
   transactions  Transaction[]
   promoUsage    PromoUsage[]
@@ -22,67 +22,67 @@ model User {
 }
 
 model Wallet {
-  id            String    @id @default(cuid())
-  userId        String
+  id            String        @id @default(auto()) @map("_id") @db.ObjectId
+  userId        String        @db.ObjectId
   currency      String
-  balance       Float     @default(0)
-  address       String    @unique
-  user          User      @relation(fields: [userId], references: [id])
+  balance       Float         @default(0)
+  address       String        @unique
+  user          User          @relation(fields: [userId], references: [id])
   transactions  Transaction[]
 }
 
 model Transaction {
-  id            String    @id @default(cuid())
-  userId        String
-  walletId      String
-  type          String    // DEPOSIT, WITHDRAWAL, TRADE, BONUS
+  id            String        @id @default(auto()) @map("_id") @db.ObjectId
+  userId        String        @db.ObjectId
+  walletId      String        @db.ObjectId
+  type          String        // DEPOSIT, WITHDRAWAL, TRADE, BONUS
   amount        Float
   currency      String
-  status        String    // PENDING, COMPLETED, FAILED
+  status        String        // PENDING, COMPLETED, FAILED
   fromAddress   String?
   toAddress     String?
-  createdAt     DateTime  @default(now())
-  user          User      @relation(fields: [userId], references: [id])
-  wallet        Wallet    @relation(fields: [walletId], references: [id])
+  createdAt     DateTime      @default(now())
+  user          User          @relation(fields: [userId], references: [id])
+  wallet        Wallet        @relation(fields: [walletId], references: [id])
 }
 
 model PromoCode {
-  id            String    @id @default(cuid())
-  code          String    @unique
+  id            String        @id @default(auto()) @map("_id") @db.ObjectId
+  code          String        @unique
   discount      Float
   validUntil    DateTime
   usageLimit    Int
-  usageCount    Int       @default(0)
-  createdAt     DateTime  @default(now())
+  usageCount    Int           @default(0)
+  createdAt     DateTime      @default(now())
   promoUsage    PromoUsage[]
 }
 
 model PromoUsage {
-  id            String    @id @default(cuid())
-  userId        String
-  promoCodeId   String
-  usedAt        DateTime  @default(now())
-  user          User      @relation(fields: [userId], references: [id])
-  promoCode     PromoCode @relation(fields: [promoCodeId], references: [id])
-
+  id            String        @id @default(auto()) @map("_id") @db.ObjectId
+  userId        String        @db.ObjectId
+  promoCodeId   String        @db.ObjectId
+  usedAt        DateTime      @default(now())
+  user          User          @relation(fields: [userId], references: [id])
+  promoCode     PromoCode     @relation(fields: [promoCodeId], references: [id])
+  
   @@unique([userId, promoCodeId])
 }
 
 model SupportChat {
-  id            String    @id @default(cuid())
-  userId        String
-  status        String    // OPEN, CLOSED
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  id            String        @id @default(auto()) @map("_id") @db.ObjectId
+  userId        String        @db.ObjectId
+  status        String        // OPEN, CLOSED
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
   messages      Message[]
-  user          User      @relation(fields: [userId], references: [id])
+  user          User          @relation(fields: [userId], references: [id])
 }
 
 model Message {
-  id            String    @id @default(cuid())
-  chatId        String
+  id            String        @id @default(auto()) @map("_id") @db.ObjectId
+  chatId        String        @db.ObjectId
   content       String
   isFromSupport Boolean
-  createdAt     DateTime  @default(now())
-  chat          SupportChat @relation(fields: [chatId], references: [id])
+  createdAt     DateTime      @default(now())
+  chat          SupportChat   @relation(fields: [chatId], references: [id])
 }

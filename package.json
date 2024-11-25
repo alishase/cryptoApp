@@ -7,7 +7,8 @@
     "build": "prisma generate && next build",
     "start": "next start",
     "lint": "next lint",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "migrate": "node prisma/migrate-data.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.4",
