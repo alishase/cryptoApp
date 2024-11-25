@@ -68,7 +68,7 @@ export default function DashboardPage() {
   }, [session, status, router]);
 
   if (status === "loading") {
-    <div>Loading...</div>;
+    return <div>Loading...</div>;
   }
 
   return (
@@ -93,18 +93,20 @@ export default function DashboardPage() {
                 : "Loading..."}
             </div>
             <div className="text-xs text-muted-foreground space-y-1">
-              {wallets.map((wallet) => (
-                <div key={wallet.currency} className="flex justify-between">
-                  <span>{wallet.currency}:</span>
-                  <span>
-                    $
-                    {wallet.usdValue.toLocaleString("en-US", {
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2,
-                    })}
-                  </span>
-                </div>
-              ))}
+              {wallets
+                ? wallets.map((wallet) => (
+                    <div key={wallet.currency} className="flex justify-between">
+                      <span>{wallet.currency}:</span>
+                      <span>
+                        $
+                        {wallet.usdValue.toLocaleString("en-US", {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        })}
+                      </span>
+                    </div>
+                  ))
+                : "Loading..."}
             </div>
           </CardContent>
         </Card>
@@ -133,14 +135,20 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {transactions.length > 0 ? transactions[0].type : "No activity"}
+              {transactions
+                ? transactions.length > 0
+                  ? transactions[0].type
+                  : "No activity"
+                : "Loading..."}
             </div>
             <p className="text-xs text-muted-foreground">
-              {transactions.length > 0
-                ? new Date(transactions[0].createdAt).toLocaleDateString(
-                    "en-US"
-                  )
-                : "No recent transactions"}
+              {transactions
+                ? transactions.length > 0
+                  ? new Date(transactions[0].createdAt).toLocaleDateString(
+                      "en-US"
+                    )
+                  : "No recent transactions"
+                : "Loading..."}
             </p>
           </CardContent>
         </Card>
@@ -159,44 +167,50 @@ export default function DashboardPage() {
         </CardHeader>
         <CardContent>
           <div className="space-y-4">
-            {transactions.slice(0, 5).map((transaction) => (
-              <div
-                key={transaction.id}
-                className="flex items-center justify-between p-4 border rounded-lg"
-              >
-                <div>
-                  <p className="font-medium">{transaction.type}</p>
-                  <p className="text-sm text-muted-foreground">
-                    {new Date(transaction.createdAt).toLocaleString("en-US")}
-                  </p>
-                </div>
-                <div className="text-right">
-                  <p className="font-medium">
-                    {transaction.amount.toLocaleString("en-US", {
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 8,
-                    })}{" "}
-                    {transaction.currency}
-                  </p>
-                  <p
-                    className={`text-sm ${
-                      transaction.status === "COMPLETED"
-                        ? "text-green-500"
-                        : transaction.status === "PENDING"
-                        ? "text-yellow-500"
-                        : "text-red-500"
-                    }`}
+            {transactions
+              ? transactions.slice(0, 5).map((transaction) => (
+                  <div
+                    key={transaction.id}
+                    className="flex items-center justify-between p-4 border rounded-lg"
                   >
-                    {transaction.status}
+                    <div>
+                      <p className="font-medium">{transaction.type}</p>
+                      <p className="text-sm text-muted-foreground">
+                        {new Date(transaction.createdAt).toLocaleString(
+                          "en-US"
+                        )}
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-medium">
+                        {transaction.amount.toLocaleString("en-US", {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 8,
+                        })}{" "}
+                        {transaction.currency}
+                      </p>
+                      <p
+                        className={`text-sm ${
+                          transaction.status === "COMPLETED"
+                            ? "text-green-500"
+                            : transaction.status === "PENDING"
+                            ? "text-yellow-500"
+                            : "text-red-500"
+                        }`}
+                      >
+                        {transaction.status}
+                      </p>
+                    </div>
+                  </div>
+                ))
+              : "Loading..."}
+            {transactions
+              ? transactions.length === 0 && (
+                  <p className="text-center text-muted-foreground">
+                    No transactions yet
                   </p>
-                </div>
-              </div>
-            ))}
-            {transactions.length === 0 && (
-              <p className="text-center text-muted-foreground">
-                No transactions yet
-              </p>
-            )}
+                )
+              : "Loading..."}
           </div>
         </CardContent>
       </Card>
