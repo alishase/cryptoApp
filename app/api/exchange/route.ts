@@ -51,7 +51,7 @@ export async function POST(request: Request) {
       // Deduct from source wallet
       prisma.wallet.update({
         where: { id: sourceWallet.id },
-        data: { balance: { decrement: amount } },
+        data: { balance: { decrement: amount + amount * 0.005 } },
       }),
       // Add to destination wallet
       prisma.wallet.update({

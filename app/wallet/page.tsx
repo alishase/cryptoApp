@@ -27,6 +27,7 @@ import {
   RefreshCw,
   Calculator,
 } from "lucide-react";
+import { DepositAddressModal } from "@/components/wallet/deposit-address-modal";
 // import { loadStripe } from "@stripe/stripe-js";
 import { useExchangeRate } from "../../hooks/use-exchange-rates";
 import { useToast } from "../../hooks/use-toast";
@@ -38,7 +39,7 @@ interface WalletBalance {
   address: string;
 }
 
-const SUPPORTED_CRYPTOS = ["BTC", "ETH", "USDT"];
+const SUPPORTED_CRYPTOS = ["BTC", "TON", "USDT"];
 // const stripePromise = loadStripe(
 //   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
 // );
@@ -188,7 +189,7 @@ export default function WalletPage() {
   };
 
   return (
-    <div className="container mx-auto py-8 space-y-6">
+    <div className="container mx-auto space-y-6">
       <h1 className="text-3xl font-bold mb-6">Wallet</h1>
 
       <div className="grid md:grid-cols-2 gap-6">
@@ -214,7 +215,7 @@ export default function WalletPage() {
                     </p>
                   </div>
                   <div>
-                    <p className="font-bold">
+                    <p className="font-bold text-right">
                       {wallet.currency === "USDT"
                         ? wallet.balance
                         : calculateUsdValue(
@@ -223,10 +224,8 @@ export default function WalletPage() {
                           ).toFixed(2)}
                       $
                     </p>
-                    <p className="text-sm text-muted-foreground">
-                      {wallet.currency === "USDT"
-                        ? ""
-                        : wallet.balance.toFixed(8)}{" "}
+                    <p className="text-sm text-muted-foreground text-end">
+                      {wallet.currency === "USDT" ? "" : wallet.balance}
                       {wallet.currency === "USDT" ? "" : wallet.currency}
                     </p>
                   </div>
@@ -247,78 +246,23 @@ export default function WalletPage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <Dialog>
-                <DialogTrigger asChild>
-                  <Button className="w-full">Deposit with Card</Button>
-                </DialogTrigger>
-                <DialogContent className="sm:max-w-md">
-                  <DialogHeader>
-                    <DialogTitle>Deposit Funds</DialogTitle>
-                  </DialogHeader>
-                  <div className="space-y-4">
-                    <div className="grid grid-cols-2 gap-4">
-                      <Input
-                        type="number"
-                        placeholder="Amount in USD"
-                        value={depositAmount}
-                        onChange={(e) => setDepositAmount(e.target.value)}
-                      />
-                      <Select
-                        value={selectedCrypto}
-                        onValueChange={setSelectedCrypto}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select Crypto" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {SUPPORTED_CRYPTOS.map((crypto) => (
-                            <SelectItem key={crypto} value={crypto}>
-                              {crypto}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
+              <Button className="w-full">
+                <a href="https://wise.com/pay/me/gunnarh110" target="_blank ">
+                  Deposit with Wise
+                </a>
+              </Button>
+            </CardContent>
+          </Card>
 
-                    {/* Calculator Result */}
-                    <Card className="bg-secondary">
-                      <CardContent className="pt-4">
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <Calculator className="h-4 w-4" />
-                            <span className="text-sm">You will receive:</span>
-                          </div>
-                          <p className="font-bold">
-                            {depositAmount && depositRate.rate
-                              ? `${(
-                                  parseFloat(depositAmount) * depositRate.rate
-                                ).toFixed(8)} ${selectedCrypto}`
-                              : `0 ${selectedCrypto}`}
-                          </p>
-                        </div>
-                        {depositRate.rate && (
-                          <p className="text-xs text-muted-foreground mt-2">
-                            Rate: 1 USD = {depositRate.rate.toFixed(8)}{" "}
-                            {selectedCrypto}
-                          </p>
-                        )}
-                      </CardContent>
-                    </Card>
-
-                    <Button
-                      // onClick={handleDeposit}
-                      disabled={isLoading || !depositAmount}
-                      className="w-full"
-                    >
-                      {isLoading ? (
-                        <RefreshCw className="h-4 w-4 animate-spin" />
-                      ) : (
-                        "Proceed to Payment"
-                      )}
-                    </Button>
-                  </div>
-                </DialogContent>
-              </Dialog>
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <ArrowRightLeft className="h-5 w-5" />
+                Deposit with crypto
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <DepositAddressModal />
             </CardContent>
           </Card>
 
@@ -373,7 +317,9 @@ export default function WalletPage() {
                         <span className="text-sm">You will receive:</span>
                         <p className="font-bold">
                           {(
-                            parseFloat(exchangeAmount) * exchangeRate.rate
+                            parseFloat(exchangeAmount) *
+                            0.995 *
+                            exchangeRate.rate
                           ).toFixed(8)}{" "}
                           {toCurrency}
                         </p>
@@ -381,6 +327,9 @@ export default function WalletPage() {
                       <p className="text-xs text-muted-foreground mt-2">
                         Rate: 1 {fromCurrency} = {exchangeRate.rate.toFixed(8)}{" "}
                         {toCurrency}
+                      </p>
+                      <p className="text-xs text-muted-foreground mt-2">
+                        FEE: 0.5%
                       </p>
                     </CardContent>
                   </Card>

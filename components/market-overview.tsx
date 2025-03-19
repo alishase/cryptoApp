@@ -13,7 +13,7 @@ type CryptoInfo = {
   symbol: string;
   name: string;
   price: number;
-  change24h: string;
+  priceChangePercent: string;
   volume: string;
 };
 
@@ -43,18 +43,18 @@ const CryptoCard = ({ crypto }: { crypto: CryptoInfo }) => (
         <div className="flex items-center gap-2">
           <div
             className={`flex items-center ${
-              parseFloat(crypto.change24h) >= 0
+              parseFloat(crypto.priceChangePercent) >= 0
                 ? "text-green-500"
                 : "text-red-500"
             }`}
           >
-            {parseFloat(crypto.change24h) >= 0 ? (
+            {parseFloat(crypto.priceChangePercent) >= 0 ? (
               <ArrowUpIcon className="h-4 w-4" />
             ) : (
               <ArrowDownIcon className="h-4 w-4" />
             )}
             <span className="font-medium">
-              {Math.abs(parseFloat(crypto.change24h))}%
+              {Math.abs(parseFloat(crypto.priceChangePercent))}%
             </span>
           </div>
           <span className="text-sm text-muted-foreground">

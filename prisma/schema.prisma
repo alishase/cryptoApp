@@ -3,12 +3,12 @@ generator client {
 }
 
 datasource db {
-  provider = "mongodb"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
 model User {
-  id            String        @id @default(auto()) @map("_id") @db.ObjectId
+  id            String        @id @default(uuid())
   email         String        @unique
   name          String?
   password      String
@@ -19,70 +19,87 @@ model User {
   transactions  Transaction[]
   promoUsage    PromoUsage[]
   supportChats  SupportChat[]
+
+  @@index([email])
 }
 
 model Wallet {
-  id            String        @id @default(auto()) @map("_id") @db.ObjectId
-  userId        String        @db.ObjectId
+  id            String        @id @default(uuid())
+  userId        String
   currency      String
-  balance       Float         @default(0)
+  balance       Decimal       @default(0) @db.Decimal(20, 8)
   address       String        @unique
-  user          User          @relation(fields: [userId], references: [id])
+  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   transactions  Transaction[]
+
+  @@index([userId])
 }
 
 model Transaction {
-  id            String        @id @default(auto()) @map("_id") @db.ObjectId
-  userId        String        @db.ObjectId
-  walletId      String        @db.ObjectId
-  type          String        // DEPOSIT, WITHDRAWAL, TRADE, BONUS
-  amount        Float
+  id            String    @id @default(uuid())
+  userId        String
+  walletId      String
+  type          String    // DEPOSIT, WITHDRAWAL, TRADE, BONUS
+  amount        Decimal   @db.Decimal(20, 8)
   currency      String
-  status        String        // PENDING, COMPLETED, FAILED
+  status        String    // PENDING, COMPLETED, FAILED
   fromAddress   String?
   toAddress     String?
-  createdAt     DateTime      @default(now())
-  user          User          @relation(fields: [userId], references: [id])
-  wallet        Wallet        @relation(fields: [walletId], references: [id])
+  createdAt     DateTime  @default(now())
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  wallet        Wallet    @relation(fields: [walletId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([walletId])
+  @@index([createdAt])
 }
 
 model PromoCode {
-  id            String        @id @default(auto()) @map("_id") @db.ObjectId
-  code          String        @unique
-  discount      Float
+  id            String      @id @default(uuid())
+  code          String      @unique
+  discount      Decimal     @db.Decimal(10, 2)
   validUntil    DateTime
   usageLimit    Int
-  usageCount    Int           @default(0)
-  createdAt     DateTime      @default(now())
+  usageCount    Int         @default(0)
+  createdAt     DateTime    @default(now())
   promoUsage    PromoUsage[]
 }
 
 model PromoUsage {
-  id            String        @id @default(auto()) @map("_id") @db.ObjectId
-  userId        String        @db.ObjectId
-  promoCodeId   String        @db.ObjectId
-  usedAt        DateTime      @default(now())
-  user          User          @relation(fields: [userId], references: [id])
-  promoCode     PromoCode     @relation(fields: [promoCodeId], references: [id])
-  
+  id            String    @id @default(uuid())
+  userId        String
+  promoCodeId   String
+  usedAt        DateTime  @default(now())
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  promoCode     PromoCode @relation(fields: [promoCodeId], references: [id], onDelete: Cascade)
+
   @@unique([userId, promoCodeId])
+  @@index([userId])
+  @@index([promoCodeId])
 }
 
 model SupportChat {
-  id            String        @id @default(auto()) @map("_id") @db.ObjectId
-  userId        String        @db.ObjectId
-  status        String        // OPEN, CLOSED
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
+  id            String    @id @default(uuid())
+  userId        String
+  status        String    // OPEN, CLOSED
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
   messages      Message[]
-  user          User          @relation(fields: [userId], references: [id])
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
 }
 
 model Message {
-  id            String        @id @default(auto()) @map("_id") @db.ObjectId
-  chatId        String        @db.ObjectId
+  id            String      @id @default(uuid())
+  chatId        String
   content       String
   isFromSupport Boolean
-  createdAt     DateTime      @default(now())
-  chat          SupportChat   @relation(fields: [chatId], references: [id])
+  createdAt     DateTime    @default(now())
+  chat          SupportChat @relation(fields: [chatId], references: [id], onDelete: Cascade)
+
+  @@index([chatId])
+  @@index([createdAt])
 }

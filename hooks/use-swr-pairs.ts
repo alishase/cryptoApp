@@ -4,7 +4,9 @@ type CryptoInfo = {
   symbol: string;
   name: string;
   price: number;
-  change24h: string;
+  priceChangePercent: string;
+  lowPrice: number;
+  highPrice: number;
   volume: string;
 };
 
@@ -13,6 +15,8 @@ type BinanceResponse = {
   lastPrice: string;
   priceChangePercent: string;
   volume: string;
+  lowPrice: string;
+  highPrice: string;
 };
 
 const formatVolume = (volumeInThousands: number): string => {
@@ -38,7 +42,9 @@ const fetcher = async (pair: string): Promise<CryptoInfo> => {
     symbol: data.symbol,
     name: pair.toUpperCase(),
     price: parseFloat(data.lastPrice),
-    change24h: `${data.priceChangePercent}%`,
+    priceChangePercent: `${data.priceChangePercent}%`,
+    lowPrice: parseFloat(data.lowPrice),
+    highPrice: parseFloat(data.highPrice),
     volume: formatVolume(parseFloat(data.volume)),
   };
 };

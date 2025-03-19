@@ -6,28 +6,23 @@ import { Newspaper } from "lucide-react";
 const news = [
   {
     id: 1,
-    title: "Bitcoin Reaches New All-Time High",
-    date: "2024-03-14",
-    summary: "Bitcoin surpasses previous records as institutional adoption continues to grow.",
-    source: "CryptoNews",
-    category: "Market Update"
+    title: "$424 Million BTC in Hours: What’s Happening?",
+    date: "02/08/2025",
+    summary:
+      "Blockchain data tracker Whale Alert recently reported a significant movement of $424 million worth of Bitcoin (BTC) across three separate transactions during the last 24 hours",
+    source: "UToday",
+    category: "BTC News",
   },
   {
     id: 2,
-    title: "Ethereum 2.0 Update Progress",
-    date: "2024-03-13",
-    summary: "The Ethereum network continues its transition to proof-of-stake with new milestones.",
-    source: "BlockchainDaily",
-    category: "Technology"
+    title:
+      "Bitcoin price today: drops to $96K as Trump's tariff warning roils risk sentiment",
+    date: "02/07/2025",
+    summary:
+      "Bitcoin climbed on Friday after U.S. President Donald Trump’s warned of imposing reciprocal tariffs on many countries next week marked a blow to sentiment on risk assets including cryptos.",
+    source: "Investing.com",
+    category: "Market News",
   },
-  {
-    id: 3,
-    title: "New Regulations for Crypto Exchanges",
-    date: "2024-03-12",
-    summary: "Regulatory bodies announce new guidelines for cryptocurrency exchanges.",
-    source: "CryptoInsider",
-    category: "Regulation"
-  }
 ];
 
 export function NewsSection() {
@@ -50,7 +45,9 @@ export function NewsSection() {
                 <span className="text-sm font-medium text-primary">
                   {item.category}
                 </span>
-                <span className="text-sm text-muted-foreground">{item.date}</span>
+                <span className="text-sm text-muted-foreground">
+                  {item.date}
+                </span>
               </div>
               <h3 className="font-semibold text-lg mb-2">{item.title}</h3>
               <p className="text-muted-foreground">{item.summary}</p>
