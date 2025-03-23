@@ -4,13 +4,13 @@ import { authOptions } from "../../../../../lib/auth";
 import { getOrCreateDepositAddress } from "../../../../../lib/services/deposit.service";
 
 // Define supported deposit cryptocurrencies
-export const DEPOSIT_CRYPTOCURRENCIES = {
+const DEPOSIT_CRYPTOCURRENCIES = {
   BTC: "bitcoin",
   USDT: "tether",
   TON: "ton",
   ETH: "ethereum",
   SOL: "solana",
-} as const;
+};
 
 export async function GET(
   request: Request,

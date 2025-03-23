@@ -23,7 +23,7 @@ export async function GET() {
       wallets.map(async (wallet) => {
         try {
           const usdRate = await getExchangeRate(wallet.currency, "USD");
-          const usdValue = wallet.balance * usdRate;
+          const usdValue = Number(wallet.balance) * usdRate;
           totalBalance += usdValue;
 
           return {
