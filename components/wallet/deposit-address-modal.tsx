@@ -19,6 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import Image from "next/image";
 
 interface WalletAddress {
   currency: string;
@@ -127,9 +128,11 @@ export function DepositAddressModal() {
             <>
               <div className="flex justify-center">
                 <div className="bg-white p-4 rounded-lg">
-                  <img
+                  <Image
                     src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${walletAddress.address}`}
                     alt="QR Code"
+                    width={200}
+                    height={200}
                     className="w-48 h-48"
                   />
                 </div>
