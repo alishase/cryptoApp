@@ -59,7 +59,7 @@ export default function MarketPage() {
 
   return (
     <div className="container mx-auto py-8 space-y-6">
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center sm:justify-between mb-6 flex-wrap md:px-8 sm:px-2 gap-5 justify-center">
         <h1 className="text-3xl font-bold">Market</h1>
         <div className="flex items-center gap-4">
           <div className="relative">
@@ -68,11 +68,11 @@ export default function MarketPage() {
               placeholder="Search pairs..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10 w-[200px]"
+              className="pl-10 w-[150px]"
             />
           </div>
           <Link href="/wallet">
-            <Button>
+            <Button className="w-[140px]">
               <DollarSign className="mr-2 h-4 w-4" />
               Trade Now
             </Button>
@@ -80,19 +80,12 @@ export default function MarketPage() {
         </div>
       </div>
 
-      <div className="grid lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2">
-          <Card className="border-none shadow-lg">
-            <CardHeader>
-              <CardTitle className="text-2xl">{selectedPair} Chart</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <CryptoChart pair={selectedPair} />
-            </CardContent>
-          </Card>
+      <div className="grid md:grid-cols-3 gap-6">
+        <div className="md:col-span-2 col-span-3">
+          <CryptoChart pair={selectedPair} />
         </div>
 
-        <div className="space-y-6">
+        <div className="space-y-6 flex flex-row justify-between items-start gap-4 md:col-span-1 col-span-3 md:block">
           <Card className="border-none shadow-lg">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -236,7 +229,7 @@ export default function MarketPage() {
 
                     return (
                       <>
-                        <div className="flex justify-between items-center">
+                        <div className="flex justify-between items-center flex-wrap">
                           <span className="text-muted-foreground">
                             24h High
                           </span>
@@ -244,13 +237,13 @@ export default function MarketPage() {
                             ${pair.highPrice.toLocaleString()}
                           </span>
                         </div>
-                        <div className="flex justify-between items-center">
+                        <div className="flex justify-between items-center flex-wrap gap-1">
                           <span className="text-muted-foreground">24h Low</span>
                           <span className="font-medium">
                             ${pair.lowPrice.toLocaleString()}
                           </span>
                         </div>
-                        <div className="flex justify-between items-center">
+                        <div className="flex justify-between items-center flex-wrap">
                           <span className="text-muted-foreground">
                             24h Volume
                           </span>
@@ -258,7 +251,7 @@ export default function MarketPage() {
                             ${pair.volume.toLocaleString()}
                           </span>
                         </div>
-                        <div className="flex justify-between items-center">
+                        <div className="flex justify-between items-center flex-wrap">
                           <span className="text-muted-foreground">
                             24h Change
                           </span>

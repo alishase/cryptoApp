@@ -60,8 +60,8 @@ const CryptoChart: React.FC<CryptoChartProps> = ({ pair }) => {
   };
   return (
     <Card className="border-none shadow-lg">
-      <CardHeader>
-        <div className="flex items-center justify-between">
+      <CardHeader className="px-4 pr-0">
+        <div className="flex items-center justify-between gap-4 flex-wrap">
           <CardTitle className="text-2xl">{pair} Price Chart</CardTitle>
           <div className="flex gap-2">
             {[
@@ -83,7 +83,7 @@ const CryptoChart: React.FC<CryptoChartProps> = ({ pair }) => {
           </div>
         </div>
       </CardHeader>
-      <CardContent>
+      <CardContent className="sm:p-6 p-1">
         <div className="h-[400px] w-full">
           {isLoading ? (
             <div className="flex items-center justify-center h-full">
