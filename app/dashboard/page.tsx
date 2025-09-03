@@ -42,13 +42,24 @@ export default function DashboardPage() {
       // Fetch wallets and total balance
       const totalResponse = await fetch("/api/wallet/total-balance");
       const totalData: DashboardData = await totalResponse.json();
-      setTotalBalance(totalData.totalBalance);
-      setWallets(totalData.wallets);
+      setTotalBalance(Number(totalData?.totalBalance ?? 0));
+      setWallets(
+        (totalData?.wallets ?? []).map((w) => ({
+          ...w,
+          usdValue: Number(w.usdValue ?? 0),
+        }))
+      );
 
       // Fetch transactions
       const transactionsResponse = await fetch("/api/transactions");
       const transactionsData = await transactionsResponse.json();
-      setTransactions(transactionsData);
+      setTransactions(
+        (transactionsData ?? []).map((t: any) => ({
+          ...t,
+          amount: Number(t?.amount ?? 0),
+          createdAt: t?.createdAt ?? null,
+        }))
+      );
     } catch (error) {
       console.error("Failed to fetch dashboard data:", error);
       toast({
@@ -85,12 +96,10 @@ export default function DashboardPage() {
           <CardContent>
             <div className="text-2xl font-bold">
               $
-              {totalBalance
-                ? totalBalance.toLocaleString("en-US", {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                  })
-                : "Loading..."}
+              {(totalBalance ?? 0).toLocaleString("en-US", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}
             </div>
             <div className="text-xs text-muted-foreground space-y-1">
               {wallets
@@ -99,7 +108,7 @@ export default function DashboardPage() {
                       <span>{wallet.currency}:</span>
                       <span>
                         $
-                        {wallet.usdValue.toLocaleString("en-US", {
+                        {(wallet.usdValue ?? 0).toLocaleString("en-US", {
                           minimumFractionDigits: 2,
                           maximumFractionDigits: 2,
                         })}
@@ -183,10 +192,13 @@ export default function DashboardPage() {
                     </div>
                     <div className="text-right">
                       <p className="font-medium">
-                        {transaction.amount.toLocaleString("en-US", {
-                          minimumFractionDigits: 2,
-                          maximumFractionDigits: 8,
-                        })}{" "}
+                        {Number(transaction.amount ?? 0).toLocaleString(
+                          "en-US",
+                          {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 8,
+                          }
+                        )}{" "}
                         {transaction.currency}
                       </p>
                       <p
